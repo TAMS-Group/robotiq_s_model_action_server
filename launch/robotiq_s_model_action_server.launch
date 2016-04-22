@@ -5,16 +5,17 @@
 <!-- TODO edit values -->
 
   <arg name="gripper_name" default="SModelRobot" />
-  <arg name="min_gap" default="0" />
-  <arg name="max_gap" default="0.162" /> <!-- meters -->
+  <arg name="gripper_action_name" default="gripper_action" />
+  <arg name="min_rad" default="0.049529" />
+  <arg name="max_rad" default="0.932808" /> <!-- radiant -->
   <arg name="min_effort" default="40.0" />
   <arg name="max_effort" default="100.0" />
 
   <node name="robotiq_s_model_action_server" pkg="robotiq_s_model_action_server" 
     type="robotiq_s_model_action_server_node" output="screen">
-    <param name="gripper_name" type="str" value="$(arg gripper_name)" />
-    <param name="min_gap" type="double" value="$(arg min_gap)" />
-    <param name="max_gap" type="double" value="$(arg max_gap)" />
+    <param name="gripper_name" type="str" value="$(arg gripper_action_name)" />
+    <param name="min_rad" type="double" value="$(arg min_rad)" />
+    <param name="max_rad" type="double" value="$(arg max_rad)" />
     <param name="min_effort" type="double" value="$(arg min_effort)" />
     <param name="max_effort" type="double" value="$(arg max_effort)" />
 

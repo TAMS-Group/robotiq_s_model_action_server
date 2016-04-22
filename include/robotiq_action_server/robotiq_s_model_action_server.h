@@ -37,8 +37,9 @@ typedef control_msgs::GripperCommandResult GripperCommandResult;
  */
 struct SModelGripperParams
 {
-  double min_gap_; // meters
-  double max_gap_;
+
+  double min_rad_; //radiant
+  double max_rad_;
   double min_effort_; // N / (Nm)
   double max_effort_;
 };

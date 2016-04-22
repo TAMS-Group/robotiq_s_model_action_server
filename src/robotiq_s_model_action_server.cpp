@@ -25,25 +25,25 @@ namespace
     result.rACT = 0x1; // active gripper
     result.rGTO = 0x1; // go to position
     result.rATR = 0x0; // No emergency release
-    //result.rSP = 128; // Middle ground speed
-    //result.rSPA = 128; // Middle ground speed
-    //result.rSPB = 128; // Middle ground speed
-    //result.rSPC = 128; // Middle ground speed
-    result.rICS = 1;
-    //result.rPRA = 200;
-    result.rSPA = 100;
-    //result.rFRA = 130;
-    result.rPRS = 255;
-    result.rSPS = 255;
-    //result.rMOD = 0x1; // Pinch mode   
- 
-    if (goal.command.position > params.max_gap_ || goal.command.position < params.min_gap_)
+    result.rICS = 1;   // individual control of scissor
+    result.rSPA = 80;  // finger speed; 80 for this specific case
+    result.rSPS = 255; // scissor speed
+
+    if (goal.command.position > params.max_rad_ || goal.command.position < params.min_rad_)
     {
-      ROS_WARN("Goal gripper gap size is out of range(%f to %f): %f m",
-               params.min_gap_, params.max_gap_, goal.command.position);
+      ROS_WARN("Goal gripper rad size is out of range(%f to %f): %f m",
+               params.min_rad_, params.max_rad_, goal.command.position);
       throw BadArgumentsError();
     }
-    
+  
+
+    if (goal.command.position > params.max_rad_ || goal.command.position < params.min_rad_)
+    {
+      ROS_WARN("Goal gripper rad size is out of range(%f to %f): %f m",
+               params.min_rad_, params.max_rad_, goal.command.position);
+      throw BadArgumentsError();
+    }
+
     if (goal.command.max_effort < params.min_effort_ || goal.command.max_effort > params.max_effort_)
     {
       ROS_WARN("Goal gripper effort out of range (%f to %f N): %f N",
@@ -51,15 +51,22 @@ namespace
       throw BadArgumentsError();
     }
 
-    //double dist_per_tick = (params.max_gap_ - params.min_gap_) / 255;
-    //double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
-    double dist_per_tick = (params.max_gap_ - params.min_gap_) / 113;
-    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 113;
+    //The register value for the closed pinch mode is 113,
+    //the minimal register value for the finger is 6 , so wie divide with 107
 
-    result.rPRA = static_cast<uint8_t>((params.max_gap_ - goal.command.position) / dist_per_tick);
+    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;    
+    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 107;
+
+    result.rPRA = static_cast<uint8_t>((goal.command.position) / dist_per_tick);
     result.rFRA = static_cast<uint8_t>((goal.command.max_effort - params.min_effort_) / eff_per_tick);
-    //result.rFRA = 255;
-    //result.rPRA = 255;
+
+    /* Register Value for scissor position: calculatet with the position of fingers (between 6 and 113)
+       multiplied with max scissor position divided by max finger position.
+       I'm not sure why it musst be 212 and 113 and noch 197 and 107, cause the scissor position starts with 15 and 
+       the finger position with 6. 
+    */
+    result.rPRS = static_cast<uint8_t>(result.rPRA*(212.0/113.0));
+
     ROS_INFO("Setting goal position register to %hhu", result.rPRA);
 
     return result;
@@ -73,12 +80,10 @@ namespace
   T registerStateToResultT(const GripperInput& input, const SModelGripperParams& params, uint8_t goal_pos)
   {
     T result;
-   // double dist_per_tick = (params.max_gap_ - params.min_gap_) / 255;
-   // double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
-    double dist_per_tick = (params.max_gap_ - params.min_gap_) / 113;
-    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 113;
+    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;
+    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 107;
 
-    result.position = input.gPOA * dist_per_tick + params.min_gap_;
+    result.position = input.gPOA * dist_per_tick + params.min_rad_;
     result.effort = input.gCUA * eff_per_tick + params.min_effort_;
     result.stalled = input.gIMC == 0x1 || input.gIMC == 0x2;
     result.reached_goal = input.gPOA == goal_pos;
@@ -202,7 +207,7 @@ void SModelGripperActionServer::issueActivation()
   ROS_INFO("Activating gripper for gripper action server: %s", action_name_.c_str());
   GripperOutput out;
   out.rACT = 0x1;
-  out.rMOD = 0x2;
+  out.rMOD = 0x3;
   out.rSPA = 128;
   // other params should be zero
   goal_reg_state_ = out;
