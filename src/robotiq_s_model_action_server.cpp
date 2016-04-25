@@ -141,6 +141,10 @@ void SModelGripperActionServer::goalCB()
 
   try
   {
+    if (current_goal.command.max_effort == 0.0){
+      ROS_INFO("requested to move gripper with max_effort of 0.0. Defaulting to 70.0");
+      current_goal.command.max_effort = 70.0;
+    }
     goal_reg_state_ = goalToRegisterState(current_goal, gripper_params_);
     goal_pub_.publish(goal_reg_state_);
   }
