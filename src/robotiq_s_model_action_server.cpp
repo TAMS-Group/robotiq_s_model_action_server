@@ -55,7 +55,7 @@ namespace
     //the minimal register value for the finger is 6 , so wie divide with 107
 
     double dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;    
-    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 107;
+    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.rPRA = static_cast<uint8_t>((goal.command.position) / dist_per_tick);
     result.rFRA = static_cast<uint8_t>((goal.command.max_effort - params.min_effort_) / eff_per_tick);
@@ -81,7 +81,7 @@ namespace
   {
     T result;
     double dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;
-    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 107;
+    double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.position = input.gPOA * dist_per_tick + params.min_rad_;
     result.effort = input.gCUA * eff_per_tick + params.min_effort_;
