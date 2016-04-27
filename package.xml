@@ -2,7 +2,11 @@
 <package>
   <name>robotiq_s_model_action_server</name>
   <version>0.0.0</version>
-  <description>The robotiq_s_model_action_server package</description>
+  <description>Action server for robotic's s model gripper.
+    The action server for the gripper is only for one specific task to use it with moveit:
+    in the open mode, the gripper has a state like the wide mode. With close, the gripper
+    gets in a state like the closed scissor mode. With this task the gripper behaves similar 
+    to a 2 finger gripper.</description>
 
   <maintainer email="goerner@informatik.uni-hamburg.de">Michael Goerner</maintainer>
   <author email="5jonetzk@informatik.uni-hamburg.de">Yannick Jonetzko</author>
