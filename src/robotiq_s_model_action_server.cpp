@@ -187,8 +187,7 @@ void SModelGripperActionServer::analysisCB(const GripperInput::ConstPtr& msg)
                                          gripper_params_,
                                          goal_reg_state_.rPRA));
   }
-  else if (current_reg_state_.gGTO && current_reg_state_.gIMC && current_reg_state_.gPRA == goal_reg_state_.rPRA && 
-	current_reg_state_.gPRB == goal_reg_state_.rPRB && current_reg_state_.gPRC == goal_reg_state_.rPRC)
+  else if (current_reg_state_.gGTO && current_reg_state_.gIMC == 0x03 && current_reg_state_.gPRA == goal_reg_state_.rPRA && current_reg_state_.gSTA)
   {
     // If commanded to move and if at a goal state and if the position request matches the echo'd PR, we're
     // done with a moveregisterStateToR
