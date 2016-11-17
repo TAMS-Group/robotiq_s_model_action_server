@@ -7,7 +7,8 @@ namespace
   {
     robotiq_action_server::SModelGripperParams params;
     params.min_rad_ = 0.0495;
-    params.max_rad_ = 0.933;
+    //params.max_rad_ = 0.933;
+    params.max_rad_ = 1.222; //basic closed
 
     params.min_effort_ = 40.0; // This is a guess. Could not find data with quick search.
     params.max_effort_ = 100.0;

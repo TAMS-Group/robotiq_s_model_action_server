@@ -57,9 +57,14 @@ namespace
        I'm not sure why it musst be 212 and 113 and noch 197 and 107, cause the scissor position starts with 15 and 
        the finger position with 6. 
     */
+
     //result.rPRS = static_cast<uint8_t>(result.rPRA*(212.0/113.0));
 
     ROS_INFO("Setting goal position register to %hhu", result.rPRA);
+    ROS_INFO_STREAM("Goal command position: " << goal.command.position);
+    ROS_INFO_STREAM("param min_rad: " << params.min_rad_);
+    ROS_INFO_STREAM("param max_rad: " << params.max_rad_);
+    ROS_INFO_STREAM(goal);
 
     return result;
   }
@@ -72,7 +77,7 @@ namespace
   T registerStateToResultT(const GripperInput& input, const SModelGripperParams& params, uint8_t goal_pos)
   {
     T result;
-    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;
+    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 255;
     double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.position = input.gPOA * dist_per_tick + params.min_rad_;
@@ -203,7 +208,7 @@ void SModelGripperActionServer::issueActivation()
   GripperOutput out;
   out.rACT = 0x1;
   out.rMOD = 0x0;
-  out.rSPA = 80;
+  out.rSPA = 128;
   // other params should be zero
   goal_reg_state_ = out;
   goal_pub_.publish(out);
