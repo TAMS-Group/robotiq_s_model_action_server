@@ -26,7 +26,7 @@ namespace
     result.rGTO = 0x1; // go to position
     result.rATR = 0x0; // No emergency release
     //result.rICS = 1;   // individual control of scissor
-    result.rSPA = 80;  // finger speed; 80 for this specific case
+    result.rSPA = 128;  // finger speed; 80 for this specific case
     //result.rSPS = 255; // scissor speed
 
     if (goal.command.position > params.max_rad_ || goal.command.position < params.min_rad_)
@@ -46,7 +46,7 @@ namespace
     //The register value for the closed pinch mode is 113,
     //the minimal register value for the finger is 6 , so wie divide with 107
 
-    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 255;    
+    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 235;    
     double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.rPRA = static_cast<uint8_t>((goal.command.position) / dist_per_tick);
