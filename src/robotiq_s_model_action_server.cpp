@@ -25,9 +25,16 @@ namespace
     result.rACT = 0x1; // active gripper
     result.rGTO = 0x1; // go to position
     result.rATR = 0x0; // No emergency release
-    //result.rICS = 1;   // individual control of scissor
-    result.rSPA = 128;  // finger speed; 80 for this specific case
-    //result.rSPS = 255; // scissor speed
+    if (params.gripper_mode_ == "wide_pinch")
+    {
+      result.rICS = 1;   // individual control of scissor
+      result.rSPA = 80;  // finger speed; 80 for this specific case
+      result.rSPS = 255; // scissor speed
+    }
+    else // basic mode
+    {
+      result.rSPA = 128;  // finger speed; 80 for this specific case
+    }
 
     if (goal.command.position > params.max_rad_ || goal.command.position < params.min_rad_)
     {
@@ -43,10 +50,16 @@ namespace
       throw BadArgumentsError();
     }
 
-    //The register value for the closed pinch mode is 113,
-    //the minimal register value for the finger is 6 , so wie divide with 107
+    // The register value for the closed pinch mode is 113,
+    // the minimal register value for the finger is 6 , so wie divide with 107
+    // analog for the basic mode
 
-    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 235;    
+    double dist_per_tick;
+    if (params.gripper_mode_ == "wide_pinch")
+      dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;
+    else // basic mode
+      dist_per_tick = (params.max_rad_ - params.min_rad_) / 235;
+
     double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.rPRA = static_cast<uint8_t>((goal.command.position) / dist_per_tick);
@@ -55,16 +68,13 @@ namespace
     /* Register Value for scissor position: calculatet with the position of fingers (between 6 and 113)
        multiplied with max scissor position divided by max finger position.
        I'm not sure why it musst be 212 and 113 and noch 197 and 107, cause the scissor position starts with 15 and 
-       the finger position with 6. 
+       the finger position with 6.
     */
 
-    //result.rPRS = static_cast<uint8_t>(result.rPRA*(212.0/113.0));
+    if (params.gripper_mode_ == "wide_pinch")
+      result.rPRS = static_cast<uint8_t>(result.rPRA*(212.0/113.0));
 
     ROS_INFO("Setting goal position register to %hhu", result.rPRA);
-    ROS_INFO_STREAM("Goal command position: " << goal.command.position);
-    ROS_INFO_STREAM("param min_rad: " << params.min_rad_);
-    ROS_INFO_STREAM("param max_rad: " << params.max_rad_);
-    ROS_INFO_STREAM(goal);
 
     return result;
   }
@@ -77,7 +87,13 @@ namespace
   T registerStateToResultT(const GripperInput& input, const SModelGripperParams& params, uint8_t goal_pos)
   {
     T result;
-    double dist_per_tick = (params.max_rad_ - params.min_rad_) / 255;
+
+    double dist_per_tick;
+    if (params.gripper_mode_ == "wide_pinch")
+      dist_per_tick = (params.max_rad_ - params.min_rad_) / 107;
+    else // basic mode
+      dist_per_tick = (params.max_rad_ - params.min_rad_) / 255;
+
     double eff_per_tick = (params.max_effort_ - params.min_effort_) / 255;
 
     result.position = input.gPOA * dist_per_tick + params.min_rad_;
@@ -207,8 +223,13 @@ void SModelGripperActionServer::issueActivation()
   ROS_INFO("Activating gripper for gripper action server: %s", action_name_.c_str());
   GripperOutput out;
   out.rACT = 0x1;
-  out.rMOD = 0x0;
   out.rSPA = 128;
+
+  if (gripper_params_.gripper_mode_ == "wide_pinch")
+    out.rMOD = 0x3;
+  else
+    out.rMOD = 0x0;
+
   // other params should be zero
   goal_reg_state_ = out;
   goal_pub_.publish(out);

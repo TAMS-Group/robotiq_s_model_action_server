@@ -37,7 +37,7 @@ typedef control_msgs::GripperCommandResult GripperCommandResult;
  */
 struct SModelGripperParams
 {
-
+  std::string gripper_mode_;
   double min_rad_; //radiant
   double max_rad_;
   double min_effort_; // N / (Nm)

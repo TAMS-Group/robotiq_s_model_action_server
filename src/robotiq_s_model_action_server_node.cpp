@@ -3,16 +3,31 @@
 namespace
 {
   // Defines a default for the s model
-  robotiq_action_server::SModelGripperParams s_defaults()
+  robotiq_action_server::SModelGripperParams s_defaults(std::string gripper_mode)
   {
     robotiq_action_server::SModelGripperParams params;
-    params.min_rad_ = 0.0495;
-    //params.max_rad_ = 0.933;
-    params.max_rad_ = 1.222; //basic closed
 
-    params.min_effort_ = 40.0; // This is a guess. Could not find data with quick search.
-    params.max_effort_ = 100.0;
+    if (gripper_mode == "wide_pinch")
+    {
+        params.min_rad_ = 0.0495;
+        params.max_rad_ = 0.933;
+        params.min_effort_ = 40.0; // This is a guess. Could not find data with quick search.
+        params.max_effort_ = 100.0;
+    }
+    else
+    {
+        if (gripper_mode != "basic")
+        {
+            ROS_WARN("Gripper mode %s not known! Using basic mode.", gripper_mode.c_str());
+            gripper_mode = "basic";
+        }
+        params.min_rad_ = 0.0495;
+        params.max_rad_ = 1.222;
+        params.min_effort_ = 40.0; // This is a guess. Could not find data with quick search.
+        params.max_effort_ = 100.0;
+    }
 
+    params.gripper_mode_ = gripper_mode;
     return params;
   }
 }
@@ -28,14 +43,11 @@ int main(int argc, char** argv)
   std::string gripper_name;
   private_nh.param<std::string>("gripper_name", gripper_name, "gripper");
 
+  std::string gripper_mode;
+  private_nh.param<std::string>("gripper_mode", gripper_mode, "basic");
+
   // Fill out S-Model Params
-  robotiq_action_server::SModelGripperParams cparams = s_defaults();
-  
-  // Min because fingers can push forward before the mechanical stops are reached
-  private_nh.param<double>("min_rad", cparams.min_rad_, cparams.min_rad_);
-  private_nh.param<double>("max_rad", cparams.max_rad_, cparams.max_rad_);
-  private_nh.param<double>("min_effort", cparams.min_effort_, cparams.min_effort_);
-  private_nh.param<double>("max_effort", cparams.max_effort_, cparams.max_effort_);
+  robotiq_action_server::SModelGripperParams cparams = s_defaults(gripper_mode);
 
   ROS_INFO("Initializing Robotiq action server for gripper: %s", gripper_name.c_str());
 

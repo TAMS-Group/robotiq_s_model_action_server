@@ -2,22 +2,14 @@
 
 <launch>
 
-<!-- TODO edit values -->
-
   <arg name="gripper_name" default="SModelRobot" />
   <arg name="gripper_action_name" default="gripper_action" />
-  <arg name="min_rad" default="0.0495" />
-  <arg name="max_rad" default="1.222" /> <!-- radiant -->
-  <arg name="min_effort" default="40.0" />
-  <arg name="max_effort" default="100.0" />
+  <arg name="gripper_mode" default="basic" />
 
   <node name="robotiq_s_model_action_server" pkg="robotiq_s_model_action_server" 
     type="robotiq_s_model_action_server_node" output="screen">
     <param name="gripper_name" type="str" value="$(arg gripper_action_name)" />
-    <param name="min_rad" type="double" value="$(arg min_rad)" />
-    <param name="max_rad" type="double" value="$(arg max_rad)" />
-    <param name="min_effort" type="double" value="$(arg min_effort)" />
-    <param name="max_effort" type="double" value="$(arg max_effort)" />
+    <param name="gripper_mode" type="str" value="$(arg gripper_mode)" />
 
     <remap from="input" to="$(arg gripper_name)Input" />
     <remap from="output" to="$(arg gripper_name)Output" />
