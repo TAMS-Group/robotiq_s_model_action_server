@@ -8,6 +8,11 @@ find_package(catkin REQUIRED COMPONENTS
   robotiq_s_model_control
   roscpp
   control_msgs
+  dynamic_reconfigure
+)
+
+generate_dynamic_reconfigure_options(
+  cfg/Param.cfg
 )
 
 catkin_package(
@@ -30,6 +35,7 @@ add_executable(robotiq_s_model_action_server_node
 
 add_dependencies(robotiq_s_model_action_server_node
   robotiq_s_model_action_server_generate_messages_cpp
+  robotiq_s_model_action_server_gencfg
   ${robotiq_s_model_action_server_EXPORTED_TARGETS}
   ${robotiq_s_model_control_EXPORTED_TARGETS})
 

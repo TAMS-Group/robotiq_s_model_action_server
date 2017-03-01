@@ -16,6 +16,8 @@
 #include <robotiq_s_model_control/SModel_robot_input.h>
 #include <robotiq_s_model_control/SModel_robot_output.h>
 
+#include <dynamic_reconfigure/server.h>
+#include <robotiq_s_model_action_server/ParamConfig.h>
 
 namespace robotiq_action_server
 {
@@ -53,13 +55,14 @@ struct SModelGripperParams
 class SModelGripperActionServer
 {
 public:
-  SModelGripperActionServer(const std::string& name, const SModelGripperParams& params);
+  SModelGripperActionServer(const std::string& name, const SModelGripperParams& params, dynamic_reconfigure::Server<robotiq_s_model_action_server::ParamConfig>& server);
 
   // These functions are meant to be called by simple action server
   void goalCB();
   void preemptCB();
   void analysisCB(const GripperInput::ConstPtr& msg);
 
+  void dynamic_config_callback(robotiq_s_model_action_server::ParamConfig &config, uint32_t level);
 private:
   void issueActivation();
 

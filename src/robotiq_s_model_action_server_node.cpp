@@ -1,4 +1,6 @@
 #include "robotiq_action_server/robotiq_s_model_action_server.h"
+#include <dynamic_reconfigure/server.h>
+#include <robotiq_s_model_action_server/ParamConfig.h>
 
 namespace
 {
@@ -40,6 +42,8 @@ int main(int argc, char** argv)
   // Private Note Handle for retrieving parameter arguments to the server
   ros::NodeHandle private_nh("~");
 
+  dynamic_reconfigure::Server<robotiq_s_model_action_server::ParamConfig> server;
+
   std::string gripper_name;
   private_nh.param<std::string>("gripper_name", gripper_name, "gripper");
 
@@ -52,7 +56,7 @@ int main(int argc, char** argv)
   ROS_INFO("Initializing Robotiq action server for gripper: %s", gripper_name.c_str());
 
   // The name of the gripper -> this server communicates over name/inputs and name/outputs
-  robotiq_action_server::SModelGripperActionServer gripper (gripper_name, cparams);
+  robotiq_action_server::SModelGripperActionServer gripper (gripper_name, cparams, server);
 
   ROS_INFO("Robotiq action-server spinning for gripper: %s", gripper_name.c_str());
   ros::spin();

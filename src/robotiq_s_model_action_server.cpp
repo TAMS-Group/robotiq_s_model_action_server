@@ -5,6 +5,9 @@
 
 #include "robotiq_action_server/robotiq_s_model_action_server.h"
 
+#include <dynamic_reconfigure/server.h>
+#include <robotiq_s_model_action_server/ParamConfig.h>
+
 // To keep the fully qualified names managable
 
 //Anonymous namespaces are file local -> sort of like global static objects
@@ -117,17 +120,23 @@ namespace
     return registerStateToResultT<GripperCommandFeedback>(input, params, goal_pos);
   }
 
+
 } // end of anon namespace
 
 namespace robotiq_action_server
 {
 
-SModelGripperActionServer::SModelGripperActionServer(const std::string& name, const SModelGripperParams& params)
+SModelGripperActionServer::SModelGripperActionServer(const std::string& name, const SModelGripperParams& params, dynamic_reconfigure::Server<robotiq_s_model_action_server::ParamConfig>& server)
   : nh_()
   , as_(nh_, name, false)
   , action_name_(name)
   , gripper_params_(params)
 {
+  dynamic_reconfigure::Server<robotiq_s_model_action_server::ParamConfig>::CallbackType f;
+
+  f = boost::bind(&SModelGripperActionServer::dynamic_config_callback, this, _1, _2);
+  server.setCallback(f);
+
   as_.registerGoalCallback(boost::bind(&SModelGripperActionServer::goalCB, this));
   as_.registerPreemptCallback(boost::bind(&SModelGripperActionServer::preemptCB, this));
 
@@ -135,6 +144,26 @@ SModelGripperActionServer::SModelGripperActionServer(const std::string& name, co
   goal_pub_ = nh_.advertise<GripperOutput>("output", 1);
   as_.start();
 }
+
+  void SModelGripperActionServer::dynamic_config_callback(robotiq_s_model_action_server::ParamConfig &config, uint32_t level)
+  {
+    gripper_params_.gripper_mode_ = config.gripper_mode;
+    ROS_INFO("Gripper mode changed to: %s", config.gripper_mode.c_str());
+    if (gripper_params_.gripper_mode_ == "wide_pinch")
+    {
+      gripper_params_.min_rad_ = 0.0495;
+      gripper_params_.max_rad_ = 0.933;
+      gripper_params_.min_effort_ = 40.0;
+      gripper_params_.max_effort_ = 100.0;
+    }
+    else // basic mode
+    {
+      gripper_params_.min_rad_ = 0.0495;
+      gripper_params_.max_rad_ = 1.222;
+      gripper_params_.min_effort_ = 40.0;
+      gripper_params_.max_effort_ = 100.0;
+    }
+  }
 
 void SModelGripperActionServer::goalCB()
 {
