@@ -13,15 +13,15 @@
 #include <actionlib/server/simple_action_server.h>
 #include <control_msgs/GripperCommandAction.h>
 // Repo specific includes
-#include <robotiq_s_model_control/SModel_robot_input.h>
-#include <robotiq_s_model_control/SModel_robot_output.h>
+#include <robotiq_3f_gripper_control/Robotiq3FGripper_robot_input.h>
+#include <robotiq_3f_gripper_control/Robotiq3FGripper_robot_output.h>
 
 
 namespace robotiq_action_server
 {
 
-typedef robotiq_s_model_control::SModel_robot_input GripperInput;
-typedef robotiq_s_model_control::SModel_robot_output GripperOutput;
+typedef robotiq_3f_gripper_control::Robotiq3FGripper_robot_input GripperInput;
+typedef robotiq_3f_gripper_control::Robotiq3FGripper_robot_output GripperOutput;
 
 typedef control_msgs::GripperCommandGoal GripperCommandGoal;
 typedef control_msgs::GripperCommandFeedback GripperCommandFeedback;

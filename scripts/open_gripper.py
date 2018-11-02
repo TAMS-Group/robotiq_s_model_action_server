@@ -2,14 +2,14 @@
 
 import roslib
 import rospy
-from robotiq_s_model_control.msg import _SModel_robot_output as outputMsg
+from robotiq_3f_gripper_control.msg import Robotiq3FGripper_robot_output
 
 
 def publisher():
     rospy.init_node('CloseGripper')
-    pub = rospy.Publisher('SModelRobotOutput', outputMsg.SModel_robot_output, queue_size=1)
+    pub = rospy.Publisher('Robotiq3FGripperRobotOutput', Robotiq3FGripper_robot_output, queue_size=1)
 
-    command = outputMsg.SModel_robot_output()
+    command = Robotiq3FGripper_robot_output()
     command.rACT = 1
     command.rGTO = 1
     command.rSPA = 255

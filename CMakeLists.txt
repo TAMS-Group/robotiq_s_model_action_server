@@ -5,14 +5,14 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
   message_generation
-  robotiq_s_model_control
+  robotiq_3f_gripper_control
   roscpp
   control_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS actionlib actionlib_msgs robotiq_s_model_control roscpp
+  CATKIN_DEPENDS actionlib actionlib_msgs robotiq_3f_gripper_control roscpp
 )
 
 include_directories(include)

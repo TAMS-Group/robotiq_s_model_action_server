@@ -2,7 +2,7 @@
 
 <launch>
 
-  <arg name="gripper_name" default="SModelRobot" />
+  <arg name="gripper_name" default="Robotiq3FGripperRobot" />
   <arg name="gripper_action_name" default="gripper_action" />
   <arg name="gripper_mode" default="basic" />
 
