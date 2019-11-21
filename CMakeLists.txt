@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(robotiq_s_model_action_server)
 
+## Add support for C++11, supported in ROS Kinetic and newer
+add_compile_options(-std=c++11)
+
 find_package(catkin REQUIRED COMPONENTS
   actionlib
   actionlib_msgs
@@ -37,27 +40,7 @@ add_dependencies(robotiq_s_model_action_server_node
    ${catkin_LIBRARIES}
  )
 
- # The test server
-add_executable(robotiq_s_model_action_server_client_test
-  src/robotiq_s_model_action_server_client_test.cpp
-)
-
-add_dependencies(robotiq_s_model_action_server_client_test
-  robotiq_s_model_action_server_generate_messages_cpp
-  ${robotiq_s_model_action_server_EXPORTED_TARGETS})
-
-target_link_libraries(robotiq_s_model_action_server_client_test
-  ${catkin_LIBRARIES}
-)
-
-
 install(TARGETS robotiq_s_model_action_server_node
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-install(TARGETS robotiq_s_model_action_server_client_test
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
