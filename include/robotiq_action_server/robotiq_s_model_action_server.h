@@ -13,15 +13,15 @@
 #include <actionlib/server/simple_action_server.h>
 #include <control_msgs/FollowJointTrajectoryAction.h>
 // Repo specific includes
-#include <robotiq_3f_gripper_control/Robotiq3FGripper_robot_input.h>
-#include <robotiq_3f_gripper_control/Robotiq3FGripper_robot_output.h>
 
+#include <robotiq_3f_gripper_articulated_msgs/Robotiq3FGripperRobotOutput.h>
+#include <robotiq_3f_gripper_articulated_msgs/Robotiq3FGripperRobotInput.h>
 
 namespace robotiq_action_server
 {
 
-typedef robotiq_3f_gripper_control::Robotiq3FGripper_robot_input GripperInput;
-typedef robotiq_3f_gripper_control::Robotiq3FGripper_robot_output GripperOutput;
+typedef robotiq_3f_gripper_articulated_msgs::Robotiq3FGripperRobotOutput GripperOutput;
+typedef robotiq_3f_gripper_articulated_msgs::Robotiq3FGripperRobotInput GripperInput;
 
 typedef control_msgs::FollowJointTrajectoryGoal FollowJointTrajectoryGoal;
 typedef control_msgs::FollowJointTrajectoryFeedback FollowJointTrajectoryFeedback;
