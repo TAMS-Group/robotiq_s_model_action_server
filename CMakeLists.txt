@@ -30,9 +30,7 @@ add_executable(robotiq_s_model_action_server_node
   src/robotiq_s_model_action_server.cpp
   include/robotiq_action_server/robotiq_s_model_action_server.h
 )
-
-add_dependencies(robotiq_s_model_action_server_node
-  robotiq_s_model_action_server_generate_messages_cpp
+add_dependencies(robotiq_s_model_action_server_node ${catkin_EXPORTED_TARGETS}
   ${robotiq_s_model_action_server_EXPORTED_TARGETS}
   ${robotiq_s_model_control_EXPORTED_TARGETS})
 
