@@ -17,6 +17,7 @@ def publisher(input_command):
     elif input_command == "c":
         command.rPRA = 255
     else:
+        rospy.logwarn("use o or c to control the hand open or close")
         raise NotImplementedError
     rospy.sleep(1)
     pub.publish(command)
