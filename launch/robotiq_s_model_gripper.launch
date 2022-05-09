@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true"
+          output="screen"/> -->
+
+    <!-- Gripper -->
+    <arg name="gripper_start_mode" default="basic"/>   <!-- basic or pinch -->
+
+    <!--  <node name="robotiqSModel" pkg="robotiq_s_model_control" type="SModelTcpNode.py" args="$(arg hand_ip)"/>-->
+    <node name="robotiq3fGripper" pkg="robotiq_3f_gripper_control" type="Robotiq3FGripperRtuNode.py"
+          args="/dev/rfcomm2" output="screen"/>
+    <node name="robotiq3fGripperStatePublisher" pkg="robotiq_3f_gripper_joint_state_publisher"
+          type="robotiq_3f_gripper_joint_states" output="screen">
+        <param name="prefix" value="s_model_"/>
+    </node>
+    <!-- Gripper action server-->
+    <include file="$(find robotiq_s_model_action_server)/launch/robotiq_s_model_action_server.launch">
+        <arg name="gripper_start_mode" value="$(arg gripper_start_mode)"/>
+    </include>
+
+    <!-- Force Torque 150 -->
+    <node name="forceTorque" pkg="robotiq_ft_sensor" type="rq_sensor">
+        <param name="frame_id" value="ft_robotiq_force_torque_frame_id"/>
+        <param name="serial_id" value="rfcomm1"/>
+    </node>
+
+</launch>
